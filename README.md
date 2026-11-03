@@ -60,8 +60,7 @@ update; neither condition certifies globally optimal physical source recovery.
 `data/synthetic/` contains ten frozen source configurations and standard-noise
 arrays named `realization_01.mat` through `realization_10.mat`.
 `case_index` selects the same consecutive public ID. The archived-result
-filenames use these public IDs too. `data/synthetic/layout_id_map.csv` maps
-public IDs 1--10 to original IDs `[1 3 4 7 8 10 13 18 19 24]`.
+filenames use these public IDs too. `data/synthetic/layout_id_map.csv` 
 All supplied MAT payloads are unchanged and retain their original metadata.
 The main script labels newly loaded/computed results by public ID and retains
 `original_realization` in the run metadata and per-case CSV. Consecutive
