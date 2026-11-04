@@ -1,14 +1,16 @@
 # Fusion-aware window game: supplementary MATLAB package
 
-This package contains two runnable entry scripts, the numerical functions they
-use, fixed synthetic inputs, the Area 1 measured inputs, and archived results.
+This package contains two computation entry scripts, an archived-plotting
+shortcut, the numerical functions they use, fixed synthetic inputs, the Area 1
+measured inputs, and archived results.
 It assembles the existing implementation; it does not introduce a new inversion
 method or retune parameters to improve the reported comparison.
 
 ## Quick start
 
-Extract the **entire** ZIP, set MATLAB's Current Folder to `WindowGame_Supplement`,
-and open either entry script. Edit the parameters at its top and click Run.
+Download and extract the **entire** repository, then set MATLAB's Current Folder
+to the folder containing `main_simulation_demo.m`. Open an entry script and
+click Run. The computation settings are at the top of the two computation scripts.
 Keep the subfolders with the scripts. Do not add an older WindowGame package to
 the MATLAB path in the same session.
 
@@ -16,10 +18,14 @@ the MATLAB path in the same session.
 |---|---|---|
 | `main_simulation_demo.m` | Recompute one 10-source scene: realization 04 (original ID 7), 5% noise | Set `run_batch = true` for all 10 layouts at five noise levels |
 | `main_measured_demo.m` | Rebuild candidates from the Area 1 measured field and run all three methods | Use `fixed_candidates` to rerun coordination from supplied candidates |
+| `main_plot_archived_demo.m` | Redraw saved synthetic results using the simulation script's settings; default: realization 04, 5% noise | Does not perform inversion; keep `run_batch = false` in `main_simulation_demo.m` for a single case |
 
-Both scripts default to `run_mode = 'recompute'`. This performs an actual
+The two computation scripts default to `run_mode = 'recompute'`. This performs an actual
 inversion and can take considerably longer than plotting. For a quick view of
-the original numerical results, set:
+the archived synthetic results, run `main_plot_archived_demo.m`. It temporarily
+selects archived mode, restores its environment overrides even on error, and
+uses the case/noise/plot settings in `main_simulation_demo.m`. It does not edit
+that script. Alternatively, in either computation script, set:
 
 ```matlab
 run_mode = 'archived';
@@ -60,7 +66,8 @@ update; neither condition certifies globally optimal physical source recovery.
 `data/synthetic/` contains ten frozen source configurations and standard-noise
 arrays named `realization_01.mat` through `realization_10.mat`.
 `case_index` selects the same consecutive public ID. The archived-result
-filenames use these public IDs too. `data/synthetic/layout_id_map.csv` 
+filenames use these public IDs too. `data/synthetic/layout_id_map.csv` maps
+public IDs 1--10 to original IDs `[1 3 4 7 8 10 13 18 19 24]`.
 All supplied MAT payloads are unchanged and retain their original metadata.
 The main script labels newly loaded/computed results by public ID and retains
 `original_realization` in the run metadata and per-case CSV. Consecutive
@@ -99,6 +106,31 @@ differences from the archive. Nonlinear local fitting can yield different
 retained candidates across implementations or numerical environments. A prior
 MATLAB rerun differed from the archive; its exact cause has not been established.
 Do not combine a fresh-run figure with an archived table without checking both.
+
+### Single-demo correspondence with the submitted manuscript
+
+The source layout and the three residual RMS values in Figures 2--3 of the
+manuscript submitted on 3 November 2026 correspond to public layout 04
+(original layout 7), with 5% noise for the residual comparison:
+
+- Frozen inputs: `data/synthetic/realization_04.mat`.
+- Saved estimates: `archive/synthetic/realization_04_noise_050.mat`.
+- Main settings: `run_batch = false; case_index = 4; noise_fraction = 0.05;`.
+
+There is an unresolved discrepancy with Figure 4(b) and Section 3.3 of that
+submitted version: they report independent-method TP/FP/FN as **7/1/3**,
+whereas the supplied saved estimates give **8/0/2** under one-to-one 3D matching
+at 2 m. The archived counts have been independently checked from the estimated
+coordinates. The saved results must not be relabelled to force agreement with
+the manuscript. This archived-plotting entry therefore does **not** claim exact
+reproduction of Figure 4; resolving the discrepancy requires checking the
+manuscript figure's source results and updating the corresponding materials.
+
+The 4 November 2026 repository patch restores the previously omitted `archive/`
+directory and verification records and adds the plotting shortcut. It does not
+change the inversion kernels, source data, numerical settings or archived MAT
+payloads. Historical verification records describe earlier runs; this patch has
+not been executed in native MATLAB. See `VALIDATION.md` for verification scope.
 
 ## Measured Area 1 inputs and modes
 
