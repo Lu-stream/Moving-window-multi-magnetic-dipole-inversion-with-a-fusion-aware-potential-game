@@ -37,7 +37,7 @@ To reduce download size, only two saved demonstrations are distributed:
 
 | Saved result | Demonstration |
 |---|---|
-| `archive/synthetic/realization_04_noise_050.mat` | One 10-source synthetic layout: public ID 04 , 5% noise |
+| `archive/synthetic/realization_04_noise_050.mat` | One 10-source synthetic layout: public ID 04, 5% noise |
 | `archive/measured/area1_latest_result.mat` | Area 1 measured SQUID field, recovered sources, and CT-reference comparison |
 
 For the synthetic archive, run `main_plot_archived_demo.m` with the existing
@@ -59,7 +59,7 @@ off by default. No Python installation is needed to run the MATLAB scripts.
 
 ## What is compared
 
-The three reported methods are selected by their stored names, not array index:
+The three implemented methods are selected by their stored names, not array index:
 
 1. `primin_direct`: this project's implementation of the Primin-based baseline.
 2. `independent_refit`: independent local-cost selection, source fusion, and
@@ -110,37 +110,10 @@ precision, F1 and unmatched-output counts. Matching is one-to-one in 3D with a
 assignment. Residual color clipping is for display only; RMS uses the full array.
 
 
-These values identify the supplied historical result; they are not hard-coded
-targets. Recompute mode retains the newly calculated estimates and reports
-differences from the archive. Nonlinear local fitting can yield different
-retained candidates across implementations or numerical environments. A prior
-MATLAB rerun differed from the archive; its exact cause has not been established.
-Do not combine a fresh-run figure with an archived table without checking both.
-
-### Single-demo correspondence with the submitted manuscript
-
-The source layout and the three residual RMS values in Figures 2--3 of the
-manuscript submitted on 3 November 2026 correspond to public layout 04, with 5% noise for the residual comparison:
-
-- Frozen inputs: `data/synthetic/realization_04.mat`.
-- Saved estimates: `archive/synthetic/realization_04_noise_050.mat`.
-- Main settings: `run_batch = false; case_index = 4; noise_fraction = 0.05;`.
-
-There is an unresolved discrepancy with Figure 4(b) and Section 3.3 of that
-submitted version: they report independent-method TP/FP/FN as **7/1/3**,
-whereas the supplied saved estimates give **8/0/2** under one-to-one 3D matching
-at 2 m. The archived counts have been independently checked from the estimated
-coordinates. The saved results must not be relabelled to force agreement with
-the manuscript. This archived-plotting entry therefore does **not** claim exact
-reproduction of Figure 4; resolving the discrepancy requires checking the
-manuscript figure's source results and updating the corresponding materials.
-
-The reduced 4 November 2026 repository patch includes only the two demonstration
-MAT archives listed above, alongside the synthetic plotting shortcut and
-verification code for those archives. The remaining 49 synthetic result archives
-are omitted to reduce download size. Inversion kernels, input data, numerical
-settings, and the two retained MAT payloads are unchanged. This patch has not
-been executed in native MATLAB. See `VALIDATION.md` for verification scope.
+Archived mode redraws the saved estimates; recompute mode retains the newly
+calculated estimates. These are distinct execution modes. A fresh nonlinear
+inversion may produce different candidates or estimates, so outputs from
+different runs should be compared explicitly before being combined.
 
 ## Measured Area 1 inputs and modes
 
@@ -171,29 +144,18 @@ The measured main supports three explicitly different modes:
 | `fixed_candidates` | Load the original candidate library and baseline; recompute independent fusion/refit and fusion-aware game -> evaluation |
 | `archived` | Load the saved final estimates and fields, then write tables and plots |
 
-At a 10 micrometre 3D reference-matching tolerance, the supplied archive gives:
+Measured source matching uses a 10 micrometre three-dimensional tolerance.
+The scripts write recall, precision, F1, standard GOSPA, residual RMS, and
+source-estimate tables to the output folder. CT centers are evaluation
+references; an unmatched estimated source is not, by itself, evidence of an
+additional physical grain. Optional F2/asymmetric-loss columns are exploratory.
 
-| Method | Outputs | Matched CT grains | Unmatched outputs | Recall | Precision | F1 | GOSPA (um) | RMS (uT) |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| Primin-based | 2 | 1 | 1 | 0.125 | 0.50 | 0.2000 | 46.628617 | 48.137142 |
-| Independent + fusion | 4 | 1 | 3 | 0.125 | 0.25 | 0.1667 | 58.511006 | 36.160664 |
-| Fusion-aware game | 12 | 3 | 9 | 0.375 | 0.25 | 0.3000 | 85.008336 | 20.382409 |
-
-The reference grains matched by the game are 1, 3 and 5. The improvement in
-reference recovery and field fitting is accompanied by more unmatched outputs;
-these additional estimates are not established additional physical grains.
-The standard set-error score remains higher. Any optional F2/asymmetric-loss
-columns written to supplementary tables are exploratory and do not replace
-standard GOSPA. The historical candidate library includes local fits that
-reached their iteration budget; game termination does not certify their
-continuous-fit convergence.
-
-## Software, provenance and verification
+## Software and provenance
 
 The scripts use MATLAB R2021b-compatible base-language functions such as
 `fminsearch`, FFT and SVD. No Optimization, Statistics or Parallel Computing
-Toolbox is required. Windows MATLAB execution has not been verified in this
-packaging environment. See `VALIDATION.md` for the exact checks performed here.
+Toolbox is required. Native Windows MATLAB execution has not been verified in this
+packaging environment.
 
 Primary source packages are `WindowGame_TwoMains_REPACK.zip` and
 `MMT_MATLAB_and_Paper_Revision.zip`. Numerical kernels and settings were retained;
@@ -201,18 +163,6 @@ entry scripts, paths, explicit run modes and output handling were reorganized.
 Synthetic archives and frozen inputs preserve their original bytes. Historical
 metadata and candidate provenance are retained as records of their original
 generation, not as a claim that all those computations were rerun for this package.
-
-Optional independent validation requires Python, NumPy and SciPy:
-
-```text
-python validation/validate_archives.py
-```
-
-It checks the one supplied synthetic result and the Area 1 measured result:
-frozen-input consistency, forward reconstruction, assignment metrics, and
-measured-data fit/objective diagnostics. It does not regenerate local nonlinear
-candidates or validate omitted batch archives. `CHECKSUMS.sha256` records the
-files supplied in the reduced update package, excluding the checksum file itself.
 
 ## Data attribution
 
