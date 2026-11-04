@@ -37,7 +37,7 @@ To reduce download size, only two saved demonstrations are distributed:
 
 | Saved result | Demonstration |
 |---|---|
-| `archive/synthetic/realization_04_noise_050.mat` | One 10-source synthetic layout: public ID 04 (original ID 7), 5% noise |
+| `archive/synthetic/realization_04_noise_050.mat` | One 10-source synthetic layout: public ID 04 , 5% noise |
 | `archive/measured/area1_latest_result.mat` | Area 1 measured SQUID field, recovered sources, and CT-reference comparison |
 
 For the synthetic archive, run `main_plot_archived_demo.m` with the existing
@@ -109,13 +109,6 @@ precision, F1 and unmatched-output counts. Matching is one-to-one in 3D with a
 2 m tolerance. GOSPA uses p=1, alpha=2 and c=2 m, with its own cost-minimizing
 assignment. Residual color clipping is for display only; RMS uses the full array.
 
-Archived realization 04 (original layout 7) at 5% noise gives:
-
-| Method | TP | FP | FN | Residual RMS (nT) | GOSPA (m) |
-|---|---:|---:|---:|---:|---:|
-| Primin-based | 3 | 0 | 7 | 30.321014 | 7.997110 |
-| Independent + fusion | 8 | 0 | 2 | 15.051085 | 5.629286 |
-| Fusion-aware game | 10 | 0 | 0 | 3.116412 | 4.753696 |
 
 These values identify the supplied historical result; they are not hard-coded
 targets. Recompute mode retains the newly calculated estimates and reports
@@ -127,8 +120,7 @@ Do not combine a fresh-run figure with an archived table without checking both.
 ### Single-demo correspondence with the submitted manuscript
 
 The source layout and the three residual RMS values in Figures 2--3 of the
-manuscript submitted on 3 November 2026 correspond to public layout 04
-(original layout 7), with 5% noise for the residual comparison:
+manuscript submitted on 3 November 2026 correspond to public layout 04, with 5% noise for the residual comparison:
 
 - Frozen inputs: `data/synthetic/realization_04.mat`.
 - Saved estimates: `archive/synthetic/realization_04_noise_050.mat`.
