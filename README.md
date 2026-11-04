@@ -2,7 +2,7 @@
 
 This package contains two computation entry scripts, an archived-plotting
 shortcut, the numerical functions they use, fixed synthetic inputs, the Area 1
-measured inputs, and archived results.
+measured inputs, and two demonstration archives.
 It assembles the existing implementation; it does not introduce a new inversion
 method or retune parameters to improve the reported comparison.
 
@@ -33,6 +33,23 @@ run_mode = 'archived';
 
 Archived mode reads saved estimates; it does **not** run inversion. Missing
 archives produce an error rather than triggering a different calculation.
+To reduce download size, only two saved demonstrations are distributed:
+
+| Saved result | Demonstration |
+|---|---|
+| `archive/synthetic/realization_04_noise_050.mat` | One 10-source synthetic layout: public ID 04 (original ID 7), 5% noise |
+| `archive/measured/area1_latest_result.mat` | Area 1 measured SQUID field, recovered sources, and CT-reference comparison |
+
+For the synthetic archive, run `main_plot_archived_demo.m` with the existing
+defaults `run_batch = false`, `case_index = 4`, and `noise_fraction = 0.05` in
+`main_simulation_demo.m`. For the measured archive, set `run_mode = 'archived'`
+at the top of `main_measured_demo.m` and run that script.
+
+Other synthetic layouts and noise levels have no saved result in this reduced
+distribution. The ten frozen inputs and all inversion code remain available:
+use `run_mode = 'recompute'` and `run_batch = true` to calculate the full batch.
+Full-batch `archived` mode is not available with these two archives.
+
 All new outputs go into a unique subfolder under `output/`; supplied archives
 are never overwritten. The output path is printed in the Command Window.
 
@@ -66,14 +83,15 @@ update; neither condition certifies globally optimal physical source recovery.
 `data/synthetic/` contains ten frozen source configurations and standard-noise
 arrays named `realization_01.mat` through `realization_10.mat`.
 `case_index` selects the same consecutive public ID. The archived-result
-filenames use these public IDs too. `data/synthetic/layout_id_map.csv` .
+filenames use these public IDs too. The public/original ID mapping is recorded
+in `data/synthetic/layout_id_map.csv`.
 All supplied MAT payloads are unchanged and retain their original metadata.
 The main script labels newly loaded/computed results by public ID and retains
 `original_realization` in the run metadata and per-case CSV. Consecutive
 numbering is for file organization and does not change the selection history. There are 10 point dipoles per layout. Lengths are
 in metres, fields in nT, and moments in A m^2.
 
-The batch uses noise fractions `[0 0.01 0.05 0.10 0.15]`, with noise standard
+The recomputed batch uses noise fractions `[0 0.01 0.05 0.10 0.15]`, with noise standard
 deviation equal to the selected fraction of the clean full-map RMS. Each layout
 uses the same frozen noise array scaled across the five levels. The arrays,
 rather than a newly generated MATLAB random sequence, define the inputs.
@@ -85,7 +103,7 @@ count and true coordinates are used for forward simulation and evaluation,
 not supplied to the window-selection algorithm.
 
 The single example produces source-model, field, residual, recall and source
-recovery figures. Batch mode produces separate metric boxplots and noise curves,
+recovery figures. Recomputed batch mode produces separate metric boxplots and noise curves,
 plus CSV and MAT summaries. Standard GOSPA is reported alongside recall,
 precision, F1 and unmatched-output counts. Matching is one-to-one in 3D with a
 2 m tolerance. GOSPA uses p=1, alpha=2 and c=2 m, with its own cost-minimizing
@@ -125,11 +143,12 @@ the manuscript. This archived-plotting entry therefore does **not** claim exact
 reproduction of Figure 4; resolving the discrepancy requires checking the
 manuscript figure's source results and updating the corresponding materials.
 
-The 4 November 2026 repository patch restores the previously omitted `archive/`
-directory and verification records and adds the plotting shortcut. It does not
-change the inversion kernels, source data, numerical settings or archived MAT
-payloads. Historical verification records describe earlier runs; this patch has
-not been executed in native MATLAB. See `VALIDATION.md` for verification scope.
+The reduced 4 November 2026 repository patch includes only the two demonstration
+MAT archives listed above, alongside the synthetic plotting shortcut and
+verification code for those archives. The remaining 49 synthetic result archives
+are omitted to reduce download size. Inversion kernels, input data, numerical
+settings, and the two retained MAT payloads are unchanged. This patch has not
+been executed in native MATLAB. See `VALIDATION.md` for verification scope.
 
 ## Measured Area 1 inputs and modes
 
@@ -145,6 +164,12 @@ micrometres, even in inherited field names ending in `_m`. Internally scaled
 moments are multiplied by 1e-18 to obtain A m^2. Figures display fields in
 microtesla. CT volume-weighted centers are computed from the supplied cuboids
 and used only for reference matching after inference.
+
+Keep `data/measured/FWInput-FineCuboids-A1.txt`: the measured plotting script
+reads these cuboids to draw the actual CT grain geometry. The archived MAT
+contains the fitted results and CT-reference centers; the input cuboids remain
+necessary for displaying the full CT shapes. Archived CSV/JSON sidecar files
+are not required; the main script regenerates its output tables from the MAT.
 
 The measured main supports three explicitly different modes:
 
@@ -191,9 +216,11 @@ Optional independent validation requires Python, NumPy and SciPy:
 python validation/validate_archives.py
 ```
 
-It checks frozen-input consistency, forward reconstruction, assignment metrics,
-and measured-data fit/objective diagnostics. It does not regenerate local
-nonlinear candidates. `CHECKSUMS.sha256` records the distributed files.
+It checks the one supplied synthetic result and the Area 1 measured result:
+frozen-input consistency, forward reconstruction, assignment metrics, and
+measured-data fit/objective diagnostics. It does not regenerate local nonlinear
+candidates or validate omitted batch archives. `CHECKSUMS.sha256` records the
+files supplied in the reduced update package, excluding the checksum file itself.
 
 ## Data attribution
 
